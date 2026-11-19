@@ -16,8 +16,13 @@ OUTPUT_DIR = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
 
 
 def main():
+    if not SOURCE.is_file():
+        raise SystemExit(f"missing source image: {SOURCE}")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(SOURCE, OUTPUT_DIR / "entry.png")
+    dest = OUTPUT_DIR / "entry.png"
+    shutil.copyfile(SOURCE, dest)
+    if dest.stat().st_size != SOURCE.stat().st_size:
+        raise SystemExit(f"copy verification failed: {dest} size differs from {SOURCE}")
 
 
 if __name__ == "__main__":
